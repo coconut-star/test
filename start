@@ -373,74 +373,12 @@
     return '<dream_answer q="' + escapeAttribute(question) + '">' + lineBreak + answer.trim() + lineBreak + '</dream_answer>';
   };
 
-  const getTavernDocument = function () {
-    try {
-      return window.parent && window.parent.document ? window.parent.document : document;
-    } catch (_error) {
-      return document;
-    }
-  };
-
-  const findInput = function (doc) {
-    const selectors = [
-      '#send_textarea',
-      'textarea#send_textarea',
-      'textarea[name=send_textarea]',
-      'textarea[placeholder*=Send]',
-      'textarea',
-    ];
-    for (const selector of selectors) {
-      const target = doc.querySelector(selector);
-      if (target) {
-        return target;
-      }
-    }
-    return null;
-  };
-
-  const fireInputEvents = function (target, doc, text) {
-    try {
-      target.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
-    } catch (_error) {
-      target.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    target.dispatchEvent(new Event('change', { bubbles: true }));
-    if (doc.defaultView && doc.defaultView.$) {
-      doc.defaultView.$(target).trigger('input').trigger('change');
-    }
-  };
-
   const appendToTavernInput = function (text) {
     const value = String(text || '').trim();
     if (!value) {
       return;
     }
-
-    const doc = getTavernDocument();
-    const target = findInput(doc);
-    if (!target) {
-      console.warn('[梦境大讨论正则UI] 未找到 SillyTavern 输入框');
-      return;
-    }
-
-    target.focus();
-
-    if (target.isContentEditable) {
-      const current = target.textContent || '';
-      target.textContent = current + (current.trim() ? lineBreak : '') + value;
-      fireInputEvents(target, doc, value);
-      return;
-    }
-
-    if ('value' in target) {
-      const current = target.value || '';
-      const addition = current.trim() && !current.endsWith(lineBreak) ? lineBreak + value : value;
-      target.value = current + addition;
-      if ('selectionStart' in target) {
-        target.selectionStart = target.selectionEnd = target.value.length;
-      }
-      fireInputEvents(target, doc, value);
-    }
+    tavo.input.append(value);
   };
 
   const makeQuestionButton = function (question) {
