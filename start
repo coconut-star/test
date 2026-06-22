@@ -415,23 +415,20 @@
   };
 
   const makeCustomForm = function (question) {
-    const form = document.createElement('form');
+    const form = document.createElement('div');
     form.className = 'dream-big-discuss-ui__custom-form';
 
     const input = document.createElement('input');
     input.className = 'dream-big-discuss-ui__input';
     input.type = 'text';
     input.placeholder = '自定义回答';
-    input.addEventListener('keydown', event => event.stopPropagation());
 
     const confirm = document.createElement('button');
     confirm.className = 'dream-big-discuss-ui__confirm';
-    confirm.type = 'submit';
+    confirm.type = 'button';
     confirm.textContent = '确认';
 
-    form.append(input, confirm);
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
+    const submit = function () {
       const value = input.value.trim();
       if (!value) {
         input.focus();
@@ -440,8 +437,18 @@
       appendToTavernInput(formatDreamAnswer(question, value));
       input.value = '';
       input.focus();
-    });
+    };
 
+    input.addEventListener('keydown', function (event) {
+      event.stopPropagation();
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submit();
+      }
+    });
+    confirm.addEventListener('click', submit);
+
+    form.append(input, confirm);
     return form;
   };
 
