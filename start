@@ -373,12 +373,15 @@
     return '<dream_answer q="' + escapeAttribute(question) + '">' + lineBreak + answer.trim() + lineBreak + '</dream_answer>';
   };
 
-  const appendToTavernInput = function (text) {
+  const appendToTavernInput = function (text, autoSend) {
     const value = String(text || '').trim();
     if (!value) {
       return;
     }
     tavo.input.append(value);
+    if (autoSend) {
+      tavo.input.send();
+    }
   };
 
   const makeQuestionButton = function (question) {
@@ -399,7 +402,7 @@
     button.className = 'dream-big-discuss-ui__answer';
     button.title = '点击添加该回答到输入框';
     button.addEventListener('click', function () {
-      appendToTavernInput(formatDreamAnswer(question, answer));
+      appendToTavernInput(formatDreamAnswer(question, answer), true);
     });
 
     const answerIndex = document.createElement('span');
@@ -434,7 +437,7 @@
         input.focus();
         return;
       }
-      appendToTavernInput(formatDreamAnswer(question, value));
+      appendToTavernInput(formatDreamAnswer(question, value), true);
       input.value = '';
       input.focus();
     };
