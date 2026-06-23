@@ -345,8 +345,8 @@
   }
 
   const parsed = source.content.cloneNode(true);
-  const qNodes = Array.from(parsed.querySelectorAll('q'));
-  qNodes.forEach(node => node.remove());
+  const qNodes = Array.from(parsed.querySelectorAll('q[content]'));
+  Array.from(parsed.querySelectorAll('q')).forEach(function(node) { node.remove(); });
 
   const discuss = (parsed.textContent || '').trim();
   const note = root.querySelector('.dream-big-discuss-ui__note');
